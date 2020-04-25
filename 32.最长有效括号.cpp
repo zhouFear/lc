@@ -5,25 +5,42 @@
  */
 
 // @lc code=start
-class Solution {
+class Solution
+{
 public:
-    int longestValidParentheses(string s) {
-        if(!s.size()) return 0;
-        stack<char> sta;
-        int max = 0;
-        for (int i = 0; i<s.size(); ++i) {
-          if(s[i] == '(') sta.push('(');
-          else if (s[i] == ')') {
-            if (sta.size() == 0) break;
-            else {
-              sta.pop();
-              max+=2;
+  int longestValidParentheses(string s)
+  {
+    int len = s.size();
+    vector<int> dp(len, 0);
+    int max = 0;
+    for (int i = 1; i < len; i++)
+    {
+      if (s[i] == ')')
+      {
+        if (s[i - 1] == '(')
+        {
+          dp[i] = 2;
+          if (i - 2 > 0)
+          {
+            dp[i] = dp[i - 2] + 2;
+          }
+        } else if (dp[i-1] > 0)
+        {
+          int j = i - dp[i - 1] - 1;
+          if (j >= 0 && s[j] == '(')
+          {
+            dp[i] = dp[i-1] + 2;
+            if (i - dp[i] > 0)
+            {
+              dp[i] = dp[i] + dp[i - dp[i]];
             }
+            
           }
         }
-        int max1 = longestValidParentheses(s.substr(1));
-        return max > max1 ? max : max1;
+      }
+      max = max > dp[i] ? max : dp[i]; 
     }
+    return max;
+  }
 };
 // @lc code=end
-
